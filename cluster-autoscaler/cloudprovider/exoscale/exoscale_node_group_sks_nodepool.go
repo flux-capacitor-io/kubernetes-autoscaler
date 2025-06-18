@@ -23,6 +23,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/exoscale/internal/k8s.io/klog"
+	"k8s.io/autoscaler/cluster-autoscaler/utils/errors"
 	"sync"
 
 	apiv1 "k8s.io/api/core/v1"
@@ -102,7 +103,7 @@ func (n *sksNodepoolNodeGroup) IncreaseSize(delta int) error {
 
 // AtomicIncreaseSize is not implemented.
 func (n *sksNodepoolNodeGroup) AtomicIncreaseSize(delta int) error {
-	return cloudprovider.ErrNotImplemented
+	return errors.NewAutoscalerError(errors.InternalError, "AtomicIncreaseSize Not implemented")
 }
 
 // DeleteNodes deletes nodes from this node group. Error is returned either on
@@ -146,7 +147,7 @@ func (n *sksNodepoolNodeGroup) DeleteNodes(nodes []*apiv1.Node) error {
 
 // ForceDeleteNodes deletes nodes from the group regardless of constraints.
 func (n *sksNodepoolNodeGroup) ForceDeleteNodes(nodes []*apiv1.Node) error {
-	return cloudprovider.ErrNotImplemented
+	return errors.NewAutoscalerError(errors.InternalError, "ForceDeleteNodes Not implemented")
 }
 
 // DecreaseTargetSize decreases the target size of the node group. This function
@@ -243,14 +244,14 @@ func (n *sksNodepoolNodeGroup) Exist() bool {
 
 // Create creates the node group on the cloud provider side. Implementation optional.
 func (n *sksNodepoolNodeGroup) Create() (cloudprovider.NodeGroup, error) {
-	return nil, cloudprovider.ErrNotImplemented
+	return nil, errors.NewAutoscalerError(errors.InternalError, "Create Not implemented")
 }
 
 // Delete deletes the node group on the cloud provider side.
 // This will be executed only for autoprovisioned node groups, once their size drops to 0.
 // Implementation optional.
 func (n *sksNodepoolNodeGroup) Delete() error {
-	return cloudprovider.ErrNotImplemented
+	return errors.NewAutoscalerError(errors.InternalError, "Delete Not implemented")
 }
 
 // Autoprovisioned returns true if the node group is autoprovisioned. An autoprovisioned group
@@ -262,7 +263,7 @@ func (n *sksNodepoolNodeGroup) Autoprovisioned() bool {
 // GetOptions returns NodeGroupAutoscalingOptions that should be used for this particular
 // sksNodepoolNodeGroup. Returning a nil will result in using default options.
 func (n *sksNodepoolNodeGroup) GetOptions(_ config.NodeGroupAutoscalingOptions) (*config.NodeGroupAutoscalingOptions, error) {
-	return nil, cloudprovider.ErrNotImplemented
+	return nil, errors.NewAutoscalerError(errors.InternalError, "GetOptions Not implemented")
 }
 
 func (n *sksNodepoolNodeGroup) waitUntilRunning(ctx context.Context) error {

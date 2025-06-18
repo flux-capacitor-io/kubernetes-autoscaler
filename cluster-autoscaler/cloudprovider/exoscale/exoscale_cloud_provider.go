@@ -163,13 +163,13 @@ func (e *exoscaleCloudProvider) NodeGroupForNode(node *apiv1.Node) (cloudprovide
 
 // HasInstance returns whether a given node has a corresponding instance in this cloud provider
 func (e *exoscaleCloudProvider) HasInstance(node *apiv1.Node) (bool, error) {
-	return true, cloudprovider.ErrNotImplemented
+	return true, errors.NewAutoscalerError(errors.InternalError, "HasInstance Not implemented")
 }
 
 // Pricing returns pricing model for this cloud provider or error if not available.
 // Implementation optional.
 func (e *exoscaleCloudProvider) Pricing() (cloudprovider.PricingModel, errors.AutoscalerError) {
-	return nil, cloudprovider.ErrNotImplemented
+	return nil, errors.NewAutoscalerError(errors.InternalError, "Pricing Not implemented")
 }
 
 // GetAvailableMachineTypes get all machine types that can be requested from the cloud provider.
