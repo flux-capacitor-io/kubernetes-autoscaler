@@ -163,7 +163,11 @@ func (n *sksNodepoolNodeGroup) DecreaseTargetSize(_ int) error {
 
 // Id returns an unique identifier of the node group.
 func (n *sksNodepoolNodeGroup) Id() string {
-	return *n.sksNodepool.InstancePoolID
+	if n.sksNodepool == nil {
+		return n.machineType
+	} else {
+		return *n.sksNodepool.InstancePoolID
+	}
 }
 
 // Debug returns a string containing all information regarding this node group.
