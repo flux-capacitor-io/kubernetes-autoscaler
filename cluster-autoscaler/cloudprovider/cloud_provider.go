@@ -153,7 +153,7 @@ type CloudProvider interface {
 }
 
 // ErrNotImplemented is returned if a method is not implemented.
-var ErrNotImplemented = errors.NewAutoscalerError(errors.InternalError, "Not implemented")
+var ErrNotImplemented = errors.NewAutoscalerError(errors.InternalError, "Not implemented for this cloud provider")
 
 // ErrAlreadyExist is returned if a method already exists.
 var ErrAlreadyExist = errors.NewAutoscalerError(errors.InternalError, "Already exist")

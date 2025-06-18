@@ -18,8 +18,8 @@ package exoscale
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"k8s.io/autoscaler/cluster-autoscaler/utils/errors"
 	"sync"
 
 	apiv1 "k8s.io/api/core/v1"
@@ -38,7 +38,7 @@ type instancePoolNodeGroup struct {
 	sync.Mutex
 }
 
-var errNoInstancePool = errors.New("not an Instance Pool member")
+var errNoInstancePool = errors.NewAutoscalerErrorf(errors.InternalError, "not an Instance Pool member")
 
 // MaxSize returns maximum size of the node group.
 func (n *instancePoolNodeGroup) MaxSize() int {
@@ -95,7 +95,7 @@ func (n *instancePoolNodeGroup) IncreaseSize(delta int) error {
 
 // AtomicIncreaseSize is not implemented.
 func (n *instancePoolNodeGroup) AtomicIncreaseSize(delta int) error {
-	return cloudprovider.ErrNotImplemented
+	return errors.NewAutoscalerError(errors.InternalError, "AtomicIncreaseSize Not implemented")
 }
 
 // DeleteNodes deletes nodes from this node group. Error is returned either on
@@ -133,7 +133,7 @@ func (n *instancePoolNodeGroup) DeleteNodes(nodes []*apiv1.Node) error {
 
 // ForceDeleteNodes deletes nodes from the group regardless of constraints.
 func (n *instancePoolNodeGroup) ForceDeleteNodes(nodes []*apiv1.Node) error {
-	return cloudprovider.ErrNotImplemented
+	return errors.NewAutoscalerError(errors.InternalError, "ForceDeleteNodes Not implemented")
 }
 
 // DecreaseTargetSize decreases the target size of the node group. This function
@@ -182,7 +182,7 @@ func (n *instancePoolNodeGroup) Nodes() ([]cloudprovider.Instance, error) {
 // capacity and allocatable information as well as all pods that are started on
 // the node by default, using manifest (most likely only kube-proxy). Implementation optional.
 func (n *instancePoolNodeGroup) TemplateNodeInfo() (*framework.NodeInfo, error) {
-	return nil, cloudprovider.ErrNotImplemented
+	return nil, errors.NewAutoscalerError(errors.InternalError, "TemplateNodeInfo Not implemented")
 }
 
 // Exist checks if the node group really exists on the cloud provider side. Allows to tell the
@@ -193,14 +193,14 @@ func (n *instancePoolNodeGroup) Exist() bool {
 
 // Create creates the node group on the cloud provider side. Implementation optional.
 func (n *instancePoolNodeGroup) Create() (cloudprovider.NodeGroup, error) {
-	return nil, cloudprovider.ErrNotImplemented
+	return nil, errors.NewAutoscalerError(errors.InternalError, "Create Not implemented")
 }
 
 // Delete deletes the node group on the cloud provider side.
 // This will be executed only for autoprovisioned node groups, once their size drops to 0.
 // Implementation optional.
 func (n *instancePoolNodeGroup) Delete() error {
-	return cloudprovider.ErrNotImplemented
+	return errors.NewAutoscalerError(errors.InternalError, "Delete Not implemented")
 }
 
 // Autoprovisioned returns true if the node group is autoprovisioned. An autoprovisioned group
@@ -212,7 +212,7 @@ func (n *instancePoolNodeGroup) Autoprovisioned() bool {
 // GetOptions returns NodeGroupAutoscalingOptions that should be used for this particular
 // instancePoolNodeGroup. Returning a nil will result in using default options.
 func (n *instancePoolNodeGroup) GetOptions(_ config.NodeGroupAutoscalingOptions) (*config.NodeGroupAutoscalingOptions, error) {
-	return nil, cloudprovider.ErrNotImplemented
+	return nil, errors.NewAutoscalerError(errors.InternalError, "GetOptions Not implemented")
 }
 
 func (n *instancePoolNodeGroup) waitUntilRunning(ctx context.Context) error {
