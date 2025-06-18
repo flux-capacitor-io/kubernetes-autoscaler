@@ -19,6 +19,10 @@ package exoscale
 import (
 	"context"
 	"fmt"
+	resourceapi "k8s.io/api/resource/v1beta1"
+	"k8s.io/apimachinery/pkg/api/resource"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/exoscale/internal/k8s.io/klog"
 	"sync"
 
 	apiv1 "k8s.io/api/core/v1"
@@ -29,7 +33,7 @@ import (
 )
 
 const (
-	scaleToZeroSupported = false
+	scaleToZeroSupported = true
 )
 
 // sksNodepoolNodeGroup implements cloudprovider.NodeGroup interface for Exoscale SKS Nodepools.
@@ -43,6 +47,8 @@ type sksNodepoolNodeGroup struct {
 
 	minSize int
 	maxSize int
+
+	sksNodepoolSize string
 }
 
 // MaxSize returns maximum size of the node group.
@@ -199,7 +205,34 @@ func (n *sksNodepoolNodeGroup) Nodes() ([]cloudprovider.Instance, error) {
 // capacity and allocatable information as well as all pods that are started on
 // the node by default, using manifest (most likely only kube-proxy). Implementation optional.
 func (n *sksNodepoolNodeGroup) TemplateNodeInfo() (*framework.NodeInfo, error) {
-	return nil, cloudprovider.ErrNotImplemented
+	klog.V(4).Infof("Creating template node for node group ID: %s, machine type: %s", n.sksNodepool.ID, n.sksNodepool.InstanceTypeID)
+
+	labels := map[string]string{
+		"flux.host.node.scope":   "customer",
+		"flux.host.cluster.size": "tiny",
+	}
+
+	capacity := apiv1.ResourceList{
+		apiv1.ResourceCPU:    resource.MustParse("2"),   // 2 vCPU
+		apiv1.ResourceMemory: resource.MustParse("4Gi"), // 4 GiB RAM
+		// You may add ephemeral storage or other resources here
+	}
+
+	node := &apiv1.Node{
+		ObjectMeta: v1.ObjectMeta{
+			Name:   fmt.Sprintf("template-node-%s", n.sksNodepool.ID),
+			Labels: labels,
+		},
+		Status: apiv1.NodeStatus{
+			Capacity:    capacity,
+			Allocatable: capacity,
+		},
+	}
+
+	nodeInfo := framework.NewNodeInfo(node, make([]*resourceapi.ResourceSlice, 0))
+	nodeInfo.SetNode(node)
+
+	return nodeInfo, nil
 }
 
 // Exist checks if the node group really exists on the cloud provider side. Allows to tell the

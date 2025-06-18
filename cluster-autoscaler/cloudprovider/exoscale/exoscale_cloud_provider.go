@@ -175,20 +175,35 @@ func (e *exoscaleCloudProvider) Pricing() (cloudprovider.PricingModel, errors.Au
 // GetAvailableMachineTypes get all machine types that can be requested from the cloud provider.
 // Implementation optional.
 func (e *exoscaleCloudProvider) GetAvailableMachineTypes() ([]string, error) {
-	return []string{}, nil
+	return []string{"tiny", "xsmall", "small", "medium", "large", "xlarge", "huge"}, nil
 }
 
 // NewNodeGroup builds a theoretical node group based on the node definition provided. The node group is not automatically
 // created on the cloud provider side. The node group is not returned by NodeGroups() until it is created.
 // Implementation optional.
 func (e *exoscaleCloudProvider) NewNodeGroup(
-	_ string,
-	_,
+	machineType string,
+	labels map[string]string,
 	_ map[string]string,
 	_ []apiv1.Taint,
 	_ map[string]resource.Quantity,
 ) (cloudprovider.NodeGroup, error) {
-	return nil, cloudprovider.ErrNotImplemented
+
+	if len(e.manager.nodeGroups) == 0 {
+		return nil, errors.NewAutoscalerError(errors.TransientError, "Unable to get sks cluster from existing node group")
+	}
+	sksNodeGroup, ok := e.manager.nodeGroups[0].(*sksNodepoolNodeGroup)
+	if !ok {
+		return nil, errors.NewAutoscalerError(errors.InternalError, "Node group is of incorrect type")
+	}
+
+	return &sksNodepoolNodeGroup{
+		m:               e.manager,
+		minSize:         0,
+		maxSize:         100,
+		sksCluster:      sksNodeGroup.sksCluster,
+		sksNodepoolSize: machineType,
+	}, nil
 }
 
 // GetResourceLimiter returns struct containing limits (max, min) for resources (cores, memory etc.).
