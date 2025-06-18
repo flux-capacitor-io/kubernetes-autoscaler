@@ -67,6 +67,9 @@ func (n *sksNodepoolNodeGroup) MinSize() int {
 // to Size() once everything stabilizes (new nodes finish startup and registration or
 // removed nodes are deleted completely). Implementation required.
 func (n *sksNodepoolNodeGroup) TargetSize() (int, error) {
+	if n.sksNodepool == nil {
+		return 0, nil
+	}
 	return int(*n.sksNodepool.Size), nil
 }
 
