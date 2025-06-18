@@ -198,11 +198,11 @@ func (e *exoscaleCloudProvider) NewNodeGroup(
 	}
 
 	return &sksNodepoolNodeGroup{
-		m:               e.manager,
-		minSize:         0,
-		maxSize:         100,
-		sksCluster:      sksNodeGroup.sksCluster,
-		sksNodepoolSize: machineType,
+		m:           e.manager,
+		minSize:     0,
+		maxSize:     100,
+		sksCluster:  sksNodeGroup.sksCluster,
+		machineType: machineType,
 	}, nil
 }
 

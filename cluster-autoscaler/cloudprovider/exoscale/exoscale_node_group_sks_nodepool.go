@@ -49,7 +49,7 @@ type sksNodepoolNodeGroup struct {
 	minSize int
 	maxSize int
 
-	sksNodepoolSize string
+	machineType string
 }
 
 // MaxSize returns maximum size of the node group.
@@ -206,7 +206,7 @@ func (n *sksNodepoolNodeGroup) Nodes() ([]cloudprovider.Instance, error) {
 // capacity and allocatable information as well as all pods that are started on
 // the node by default, using manifest (most likely only kube-proxy). Implementation optional.
 func (n *sksNodepoolNodeGroup) TemplateNodeInfo() (*framework.NodeInfo, error) {
-	klog.V(4).Infof("Creating template node for node group ID: %s, machine type: %s", n.sksNodepool.ID, n.sksNodepool.InstanceTypeID)
+	klog.V(4).Infof("Creating template node for machine type: %s", n.machineType)
 
 	labels := map[string]string{
 		"flux.host.node.scope":   "customer",
@@ -216,7 +216,6 @@ func (n *sksNodepoolNodeGroup) TemplateNodeInfo() (*framework.NodeInfo, error) {
 	capacity := apiv1.ResourceList{
 		apiv1.ResourceCPU:    resource.MustParse("2"),   // 2 vCPU
 		apiv1.ResourceMemory: resource.MustParse("4Gi"), // 4 GiB RAM
-		// You may add ephemeral storage or other resources here
 	}
 
 	node := &apiv1.Node{
