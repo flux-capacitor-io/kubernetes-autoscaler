@@ -220,7 +220,7 @@ func (n *sksNodepoolNodeGroup) TemplateNodeInfo() (*framework.NodeInfo, error) {
 
 	node := &apiv1.Node{
 		ObjectMeta: v1.ObjectMeta{
-			Name:   fmt.Sprintf("template-node-%s", n.sksNodepool.ID),
+			Name:   fmt.Sprintf("template-node-%s", n.machineType),
 			Labels: labels,
 		},
 		Status: apiv1.NodeStatus{
