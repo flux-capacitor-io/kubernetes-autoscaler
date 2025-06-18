@@ -508,7 +508,7 @@ func (a *StaticAutoscaler) RunOnce(currentTime time.Time) caerrors.AutoscalerErr
 		}
 
 		if typedErr != nil {
-			klog.Errorf("Failed to scale up: %v", typedErr)
+			klog.Errorf("Failed to scale up in static autoscaler: %v", typedErr)
 			return true, typedErr
 		}
 		if scaleUpStatus.Result == status.ScaleUpSuccessful {
