@@ -412,7 +412,7 @@ func main() {
 
 func leaderElectionConfiguration() componentbaseconfig.LeaderElectionConfiguration {
 	return componentbaseconfig.LeaderElectionConfiguration{
-		LeaderElect:   true,
+		LeaderElect:   false,
 		LeaseDuration: metav1.Duration{Duration: defaultLeaseDuration},
 		RenewDeadline: metav1.Duration{Duration: defaultRenewDeadline},
 		RetryPeriod:   metav1.Duration{Duration: defaultRetryPeriod},
